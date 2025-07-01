@@ -2,8 +2,8 @@ export type Word = Character[]
 
 export class Character {
     constructor(
-        public toplines: TopLine[] = [],
-        public bottomlines: BottomLine[] = [],
+        public toplines: Set<TopLine> = new Set(),
+        public bottomlines: Set<BottomLine> = new Set(),
         public dotType: DotType = DotType.NONE
     ) {
     }
@@ -21,16 +21,16 @@ export class Character {
     }
     
     public static deserialize(serialized: SerializedCharacter): Character {
-        const toparr: TopLine[] = []
+        const toparr: Set<TopLine> = new Set()
         for (let i = 0; i <= TopLine.VERTMID3; i++) {
             if ((serialized.top & i) != 0) {
-                toparr.push(i as TopLine)
+                toparr.add(i as TopLine)
             }
         }
-        const botarr: BottomLine[] = []
+        const botarr: Set<BottomLine> = new Set()
         for (let i = 0; i <= BottomLine.VERTMID2; i++) {
             if ((serialized.bottom & i) != 0) {
-                botarr.push(i as BottomLine)
+                botarr.add(i as BottomLine)
             }
         }
         
@@ -75,11 +75,12 @@ export enum DotType {
 }
 
 export type Coordinate = [number, number]
+export type Vector = [Coordinate, Coordinate]
 
 /**
  * Coordinates are x in [0, 2] and y in [0, 3], since there are 4 rows and 3 columns per top character
  */
-export const TOPLINE_VECTOR: Record<TopLine, [Coordinate, Coordinate]> = {
+export const TOPLINE_VECTOR: Record<TopLine, Vector> = {
     [TopLine.TOPLEFT]: [[0, 2], [1, 3]],
     [TopLine.TOPRIGHT]: [[1, 3], [2, 2]],
     [TopLine.BOTTOMLEFT]: [[0, 2], [1, 1]],
@@ -96,7 +97,7 @@ export const TOPLINE_VECTOR: Record<TopLine, [Coordinate, Coordinate]> = {
  * Coordinates are x in [0, 2] and y in [0, 2], since there are 3 rows and 3 columns per bottom character
  * Coordinates start from 0 at the top and go down
  */
-export const BOTLINE_VECTOR: Record<BottomLine, [Coordinate, Coordinate]> = {
+export const BOTLINE_VECTOR: Record<BottomLine, Vector> = {
     [BottomLine.TOPLEFT]: [[0, 1], [1, 0]],
     [BottomLine.TOPRIGHT]: [[1, 0], [2, 1]],
     [BottomLine.BOTTOMLEFT]: [[0, 1], [1, 2]],
