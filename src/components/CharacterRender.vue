@@ -2,9 +2,8 @@
 import {
   BOTLINE_VECTOR,
   bottomCoordToSvgCoord, BottomLine,
-  Character,
-  type Coordinate, DIST_INCREMENT,
-  DotType, HEIGHT_INCREMENT, LINE_WIDTH, LINE_Y,
+  Character, DIST_INCREMENT, DotType,
+  HEIGHT_INCREMENT, LINE_WIDTH, LINE_Y,
   topCoordToSvgCoord, TopLine,
   TOPLINE_VECTOR, Vector
 } from "@/ts/types";
@@ -46,8 +45,8 @@ function getDisplayType<T>(id: T, set: Set<T>) {
 </script>
 
 <template>
-  <div class="tunic-character">
-    <svg :width="width" preserveAspectRatio="true" :viewBox="`-10 -10 ${LINE_WIDTH + 20} ${totalheight + 10}`" xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black">
+  <v-container class="tunic-character" fluid :width="width">
+    <svg preserveAspectRatio="true" :viewBox="`-5 -10 ${LINE_WIDTH} ${totalheight + 10}`" xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black">
       <!--        draw each part of the top character -->
       <template v-for="[id, [start, end]] in allTopLines" :key="(isEditable && character.toplines.has(id)) ? id : -id">
         <line
@@ -76,8 +75,13 @@ function getDisplayType<T>(id: T, set: Set<T>) {
               class="is-placeholder"
         />
       </template>
+      
+      <circle :class="`${character.dotType !== DotType.NONE ? 'is-active' : (isEditable ? 'is-editable' : 'is-inactive')} ${character.dotType === DotType.CLOSED ? 'closed-circle' : ''}`"
+      r="3" :cx="DIST_INCREMENT" :cy="bottomStart + HEIGHT_INCREMENT*2 + 3" />
+      <circle class="is-placeholder" @click="character.dotType = (character.dotType + 1) % (DotType.CLOSED + 1)" fill="transparent"
+              r="3" :cx="DIST_INCREMENT" :cy="bottomStart + HEIGHT_INCREMENT*2 + 3" />
     </svg>
-  </div>
+  </v-container>
 </template>
 
 <style scoped>
