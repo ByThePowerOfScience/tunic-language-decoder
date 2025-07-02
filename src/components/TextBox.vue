@@ -34,17 +34,25 @@ function selectPrev() {
 </script>
 
 <template>
-  <CharacterRender :is-editable="true" v-for="(character, i) in characters" :character="character" width="500" :key="i" :class="(selectedChar == i) ? 'selected-character' : 'unselected-character'"/>
-  <div class="buttonpanel">
-    <v-btn @click="createNewChar">Add Character</v-btn>
-    <v-btn @click="deleteChar">Remove Character</v-btn>
-  </div>
-  <div class="buttonpanel">
-    <v-btn @click="selectPrev">&lt;--</v-btn>
-    <v-btn @click="selectNext">--&gt;</v-btn>
-  </div>
   <div>
-  
+    <div >
+      <CharacterRender v-for="(character, i) in characters" :key="i"
+                       :is-editable="selectedChar == i" width="100"
+                       :character="character"
+                       :class="(selectedChar == i) ? 'selected-character' : 'unselected-character'"
+      />
+    </div>
+    <div class="buttonpanel">
+      <v-btn @click="createNewChar">Add Character</v-btn>
+      <v-btn @click="deleteChar">Remove Character</v-btn>
+    </div>
+    <div class="buttonpanel">
+      <v-btn @click="selectPrev">&lt;--</v-btn>
+      <v-btn @click="selectNext">--&gt;</v-btn>
+    </div>
+    <div>
+    
+    </div>
   </div>
   
   
@@ -56,5 +64,8 @@ function selectPrev() {
 }
 .unselected-character {
   background-color: white;
+}
+.maincontainer {
+
 }
 </style>

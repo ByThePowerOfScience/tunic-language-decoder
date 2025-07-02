@@ -45,8 +45,8 @@ function getDisplayType<T>(id: T, set: Set<T>) {
 </script>
 
 <template>
-  <v-container class="tunic-character" fluid :width="width">
-    <svg preserveAspectRatio="true" :viewBox="`-5 -10 ${LINE_WIDTH} ${totalheight + 10}`" xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black">
+  <div class="tunic-character" style="width:100%" >
+    <svg :width="width" style="float:left" preserveAspectRatio="true" :viewBox="`-5 -10 ${LINE_WIDTH} ${totalheight + 10}`" xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black">
       <!--        draw each part of the top character -->
       <template v-for="[id, [start, end]] in allTopLines" :key="(isEditable && character.toplines.has(id)) ? id : -id">
         <line
@@ -81,7 +81,7 @@ function getDisplayType<T>(id: T, set: Set<T>) {
       <circle class="is-placeholder" @click="character.dotType = (character.dotType + 1) % (DotType.CLOSED + 1)" fill="transparent"
               r="3" :cx="DIST_INCREMENT" :cy="bottomStart + HEIGHT_INCREMENT*2 + 3" />
     </svg>
-  </v-container>
+  </div>
 </template>
 
 <style scoped>

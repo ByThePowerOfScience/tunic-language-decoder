@@ -1,6 +1,32 @@
-export type Word = Character[]
+export class Word implements Serializable {
+    public constructor(public chars: Character[] = []) {}
+    
+    public serialize(): string {
+        return JSON.stringify({chars: this.chars.map(it => it.serialize())});
+    }
+    
+    public equals(other: Word): boolean {
+        let c1 = this.chars;
+        let c2 = other.chars;
+        
+        if (c1.length != c2.length) return false;
+        
+        for (let i = 0; i < c1.length; i++) {
+            if (!c1[i].equals(c2[i]))
+                return false;
+        }
+        return true;
+    }
+    
+    public static deserialize(serialized: object): Word | null {
+        if ("chars" in serialized) {
+            return new Word((serialized["chars"] as object[]).map(Character.deserialize))
+        }
+        return null
+    }
+}
 
-export class Character {
+export class Character implements Serializable {
     constructor(
         public toplines: Set<TopLine> = new Set(),
         public bottomlines: Set<BottomLine> = new Set(),
@@ -8,7 +34,7 @@ export class Character {
     ) {
     }
     
-    public serialize(): SerializedCharacter {
+    public serialize(): string {
         let sertop = 0
         for (let it of this.toplines) {
             sertop += 1 << it
@@ -17,10 +43,11 @@ export class Character {
         for (let it of this.bottomlines) {
             serbot += 1 << it
         }
-        return {top: sertop, bottom: serbot, dot_type: this.dotType}
+        return JSON.stringify({top: sertop, bottom: serbot, dot_type: this.dotType})
     }
     
-    public static deserialize(serialized: SerializedCharacter): Character {
+    public static deserialize(raw: object): Character {
+        const serialized = raw as SerializedCharacter
         const toparr: Set<TopLine> = new Set()
         for (let i = 0; i <= TopLine.VERTMID3; i++) {
             if ((serialized.top & i) != 0) {
@@ -34,14 +61,31 @@ export class Character {
             }
         }
         
-        return new Character(toparr, botarr)
+        return new Character(toparr, botarr, serialized.dot_type as DotType)
     }
+    
+    public equals(other: Character): boolean {
+        return setsEqual(this.toplines, other.toplines) && setsEqual(this.bottomlines, other.bottomlines) && this.dotType == other.dotType
+    }
+}
+
+function setsEqual<T>(set1: Set<T>, set2: Set<T>): boolean {
+    if (set1.size != set2.size)
+        return false;
+    
+    for (const value of set2.values()) {
+        if (!set1.has(value))
+            return false;
+    }
+    
+    return true;
+    
 }
 
 export interface SerializedCharacter {
     top: number,
     bottom: number,
-    dot_type: DotType
+    dot_type: number
 }
 
 export enum TopLine {
@@ -104,7 +148,7 @@ export const BOTLINE_VECTOR: Record<BottomLine, Vector> = {
     [BottomLine.BOTTOMRIGHT]: [[1, 2], [2, 1]],
     [BottomLine.VERTLEFT1]: [[0, 0], [0, 1]],
     [BottomLine.VERTLEFT2]: [[0, 1], [0, 2]],
-    [BottomLine.VERTMID1]: [[1, 0], [1, 2]],
+    [BottomLine.VERTMID1]: [[1, 0], [1, 1]],
     [BottomLine.VERTMID2]: [[1, 1], [1, 2]],
 }
 
@@ -122,4 +166,8 @@ export function topCoordToSvgCoord(coord: Coordinate): Coordinate {
 
 export function bottomCoordToSvgCoord(coord: Coordinate): Coordinate {
     return [coord[0] * DIST_INCREMENT, coord[1] * HEIGHT_INCREMENT]
+}
+
+export interface Serializable {
+    serialize(): string;
 }
