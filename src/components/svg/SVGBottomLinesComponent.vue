@@ -3,12 +3,12 @@
 import {toggleSetStatus} from "@/ts/util";
 import {Character, DIST_INCREMENT, DotType, HEIGHT_INCREMENT} from "@/ts/types";
 import {ALL_BOTTOM_LINE_VECTORS} from "@/ts/svgstuff";
+import {getDisplayType} from "@/ts/styling/Character";
 
 const {bottomStart = 0} = defineProps<{
   isEditable: boolean,
   character: Character,
-  getDisplayType: <T> (id: T, set: Set<T>) => string,
-  bottomStart: number
+  bottomStart?: number
 }>()
 </script>
 
@@ -17,7 +17,7 @@ const {bottomStart = 0} = defineProps<{
             :key="(isEditable && character.bottomlines.has(id)) ? id : -id">
     <line
         :x1="start[0]" :y1="start[1] + bottomStart" :x2="end[0]" :y2="end[1] + bottomStart"
-        class="myline" :class="getDisplayType(id, character.bottomlines)"
+        class="myline" :class="getDisplayType(isEditable, id, character.bottomlines)"
     />
     <line v-if="isEditable"
           :x1="start[0]" :y1="start[1] + bottomStart" :x2="end[0]" :y2="end[1] + bottomStart"

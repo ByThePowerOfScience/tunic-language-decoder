@@ -22,7 +22,6 @@ const props = defineProps<{
 const character = props.character || new Character()
 
 
-const allBottomLines: [BottomLine, Vector][] = $enum(BottomLine).map(it => [it, BOTLINE_VECTOR[it]] as [BottomLine, Vector]).map(([k, v]) => [k, v.map(bottomCoordToSvgCoord)] as [BottomLine, Vector])
 
 const bottom_spacing = 10
 const bottomStart = LINE_Y + bottom_spacing
@@ -30,27 +29,19 @@ const totalheight = bottomStart + 2 * HEIGHT_INCREMENT + 15
 
 
 
-function getDisplayType<T>(id: T, set: Set<T>) {
-  if (set.has(id))
-    return 'is-active'
-  if (props.isEditable) {
-    return 'is-editable'
-  }
-  return 'is-inactive'
-}
 
 </script>
 
 <template>
-  <div class="tunic-character h-100">
-    <svg height="100%" preserveAspectRatio="xMinYMid meet" :viewBox="`-1 -10 ${LINE_WIDTH + 1} ${totalheight + 10}`" xmlns="http://www.w3.org/2000/svg">
+  <div class="tunic-character">
+    <svg class="h-100" style="min-height:20rem" preserveAspectRatio="xMinYMid meet" :viewBox="`-1 -10 ${LINE_WIDTH + 1} ${totalheight + 10}`" xmlns="http://www.w3.org/2000/svg">
       <!--        draw each part of the top character -->
-      <SVGTopLinesComponent :is-editable="isEditable" :character="character" :get-display-type="getDisplayType" />
+      <SVGTopLinesComponent :is-editable="isEditable" :character="character" />
       
       <!--        center line-->
       <line class="is-active" x1="-5" :y1="LINE_Y" :x2="LINE_WIDTH" :y2="LINE_Y" stroke-width="5" stroke="black"/>
       
-      <SVGBottomLinesComponent :is-editable="isEditable" :character="character" :get-display-type="getDisplayType" :bottom-start="bottomStart" />
+      <SVGBottomLinesComponent :is-editable="isEditable" :character="character" :bottom-start="bottomStart" />
     </svg>
   </div>
 </template>
@@ -59,7 +50,6 @@ function getDisplayType<T>(id: T, set: Set<T>) {
 
 .tunic-character {
   background-color: white;
-
 }
 
 .is-active {

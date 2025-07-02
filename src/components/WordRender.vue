@@ -49,7 +49,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="maincontainer flex-row align-start" style="height:100%">
+  <div class="flex-row align-start">
     <CharacterRender v-for="(character, i) in word.chars" :key="i"
                      :is-editable="isEditable && selectedChar == i"
                      :character="character"
@@ -66,10 +66,5 @@ defineExpose({
 }
 .unselected-character {
   background-color: white;
-}
-
-.maincontainer {
-  display:flex;
-  flex-direction: row;
 }
 </style>

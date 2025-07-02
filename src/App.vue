@@ -3,6 +3,8 @@ import {BottomLine, Character, TopLine, Word} from "@/ts/types";
 import WordRender from "@/components/WordRender.vue";
 import {reactive, ref, useTemplateRef} from "vue";
 import CharacterRender from "@/components/CharacterRender.vue";
+import TopRadicalView from "@/components/TopRadicalView.vue";
+import BottomRadicalView from "@/components/BottomRadicalView.vue";
 
 const char = new Character(
     new Set([
@@ -28,62 +30,47 @@ function saveWord() {
 }
 
 const textdesc = ref("")
+
+const savedTopRadicals: Character[] = reactive([])
+const savedBottomRadicals: Character[] = reactive([])
 </script>
 
 <template>
-  <main>
-    <div class="main-word-entry">
-      <div class="maintextbox">
-        <div class="container flex-column align-start" style="height:100%">
-          <WordRender ref="mainbox" style="height:80%" is-editable/>
-          <textarea v-model="textdesc"/>
+  <main class="container" style="height:1080px;width:1920px">
+    <div class="row-4">
+        <div class="h-75 col mytextbox">
+            <WordRender class="row" ref="mainbox" is-editable/>
+            <textarea class="row" style="resize:none" v-model="textdesc" rows="1" />
         </div>
+        
+        <div class="h-25 btn-group">
+          <button type="button" class="btn active btn-secondary" @click="($refs.mainbox as TextBoxType).createNewChar()">Add Character</button>
+          <button type="button" class="btn active btn-secondary" @click="($refs.mainbox as TextBoxType).deleteChar()">Remove Character</button>
+          <button type="button" class="btn active btn-secondary" @click="saveWord">Save Word</button>
+        </div>
+    </div>
+    
+    <div id="radicals-list" class="row-3 flex-column">
+      <div id="radicals-upper" class="flex-row">
+        <TopRadicalView v-for="(char, i) in savedTopRadicals" :key="i" :character="char" class="border-dark-subtle pr-5"/>
       </div>
-      
-      <div class="buttonpanel flex-sm-1-0">
-        <v-btn @click="($refs.mainbox as TextBoxType).createNewChar()">Add Character</v-btn>
-        <v-btn @click="($refs.mainbox as TextBoxType).deleteChar()">Remove Character</v-btn>
-        <v-btn @click="saveWord">Save Word</v-btn>
+      <div id="radicals-lower" class="flex-row">
+        <BottomRadicalView v-for="(char, i) in savedBottomRadicals" :key="i" :character="char" class="border-dark-subtle pr-5"/>
       </div>
     </div>
-    <div id="radicals-list" class="d-flex flex-column">
-      <div id="radicals-upper" class="d-flex flex-row">
-<!--        TODO have a list of saved radicals and when you click on them they pop into the "edit" box -->
-      </div>
-      <div id="radicals-lower" >
-      
-      </div>
+    <div>
+    
     </div>
-    <div class="words-list">
-      <div class="listed-word-bar flex-0-0">
-        <WordRender v-for="word in saved_words" class="listed-word" :word="word"/>
-      </div>
+    <div class="row-2">
+      <ul class="list-group">
+        <li v-for="word in saved_words" class="list-group-item">
+          <WordRender :word="word"/>
+        </li>
+      </ul>
     </div>
   </main>
 </template>
 
 <style scoped>
-.maintextbox {
-  height: 200px;
-}
 
-.words-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.listed-word {
-  height: 175px;
-}
-.listed-word-bar {
-  display: flex;
-}
-
-.main-word-entry {
-  padding: 20px;
-}
-
-.buttonpanel {
-  height: 20%
-}
 </style>
