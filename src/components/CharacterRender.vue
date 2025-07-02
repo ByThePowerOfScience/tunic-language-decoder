@@ -12,11 +12,9 @@ import {$enum} from "ts-enum-util";
 
 const props = defineProps<{
   character: Character,
-  isEditable: boolean,
-  width: string | number
+  isEditable: boolean
 }>()
 const character = props.character || new Character()
-const width = +props.width
 
 
 const allTopLines: [TopLine, Vector][] = $enum(TopLine).map(it => [it, TOPLINE_VECTOR[it]] as [TopLine, Vector]).map(([k, v]) => [k, v.map(topCoordToSvgCoord)] as [TopLine, Vector])
@@ -45,8 +43,8 @@ function getDisplayType<T>(id: T, set: Set<T>) {
 </script>
 
 <template>
-  <div class="tunic-character" style="width:100%" >
-    <svg :width="width" style="float:left" preserveAspectRatio="true" :viewBox="`-5 -10 ${LINE_WIDTH} ${totalheight + 10}`" xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black">
+  <div class="tunic-character flex-shrink-0" style="width:20%">
+    <svg height="100%" preserveAspectRatio="xMinYMid meet" :viewBox="`-1 -10 ${LINE_WIDTH + 1} ${totalheight + 10}`" xmlns="http://www.w3.org/2000/svg">
       <!--        draw each part of the top character -->
       <template v-for="[id, [start, end]] in allTopLines" :key="(isEditable && character.toplines.has(id)) ? id : -id">
         <line
@@ -62,7 +60,7 @@ function getDisplayType<T>(id: T, set: Set<T>) {
      
       
       <!--        center line-->
-      <line class="is-active" x1="0" :y1="LINE_Y" :x2="LINE_WIDTH" :y2="LINE_Y" stroke-width="5" stroke="black"/>
+      <line class="is-active" x1="-5" :y1="LINE_Y" :x2="LINE_WIDTH" :y2="LINE_Y" stroke-width="5" stroke="black"/>
       
       <template v-for="[id, [start, end]] in allBottomLines" :key="(isEditable && character.bottomlines.has(id)) ? id : -id">
         <line
@@ -88,8 +86,7 @@ function getDisplayType<T>(id: T, set: Set<T>) {
 
 .tunic-character {
   background-color: white;
-  width: v-bind(width);
-  height: fit-content;
+
 }
 
 .is-active {

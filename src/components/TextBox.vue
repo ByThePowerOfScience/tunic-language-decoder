@@ -3,17 +3,18 @@
 import {Character} from "@/ts/types";
 import {reactive, ref} from "vue";
 import CharacterRender from "@/components/CharacterRender.vue";
-import StrokeSelector from "@/components/StrokeSelector.vue";
 
 const characters = reactive([reactive(new Character())])
 const selectedChar = ref(0)
+
+defineProps(['width'])
 
 function createNewChar() {
   selectedChar.value = characters.push(reactive(new Character())) - 1
 }
 
-function deleteChar() {
-  characters.splice(selectedChar.value, 1)
+function deleteChar(index: number = selectedChar.value) {
+  characters.splice(index, 1)
   if (selectedChar.value >= characters.length) {
     selectedChar.value = characters.length - 1
   }
@@ -31,28 +32,23 @@ function selectPrev() {
   else
     selectedChar.value--
 }
+
+defineExpose({
+  selectNext,
+  selectPrev,
+  createNewChar,
+  deleteChar
+})
+
 </script>
 
 <template>
-  <div>
-    <div >
-      <CharacterRender v-for="(character, i) in characters" :key="i"
-                       :is-editable="selectedChar == i" width="100"
-                       :character="character"
-                       :class="(selectedChar == i) ? 'selected-character' : 'unselected-character'"
-      />
-    </div>
-    <div class="buttonpanel">
-      <v-btn @click="createNewChar">Add Character</v-btn>
-      <v-btn @click="deleteChar">Remove Character</v-btn>
-    </div>
-    <div class="buttonpanel">
-      <v-btn @click="selectPrev">&lt;--</v-btn>
-      <v-btn @click="selectNext">--&gt;</v-btn>
-    </div>
-    <div>
-    
-    </div>
+  <div class="maincontainer">
+    <CharacterRender v-for="(character, i) in characters" :key="i"
+                     :is-editable="selectedChar == i"
+                     :character="character"
+                     :class="(selectedChar == i) ? 'selected-character' : 'unselected-character'"
+    />
   </div>
   
   
@@ -65,7 +61,9 @@ function selectPrev() {
 .unselected-character {
   background-color: white;
 }
-.maincontainer {
 
+.maincontainer {
+  display:flex;
+  flex-direction: row;
 }
 </style>
